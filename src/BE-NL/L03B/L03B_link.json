@@ -1,0 +1,1 @@
+[{"NEW_KEY":"Breadcrumb","TEMP_MAP_KEY":"#LINK:Breadcrumb_Links,#TEXT:Breadcrumb_Names","TEMPLATE":"<a href=\"#LINK\">#TEXT</a> <span> > </span><span class=\"breadcrumb-spliter\"> / </span>","LAST_TEMPLATE":"<a class=\"active\">#TEXT</a>"}]

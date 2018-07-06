@@ -1,0 +1,134 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>HTML Generator</title>
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+    <script>
+    function readUrl(input) {
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          var imgData = e.target.result;
+          var imgName = input.files[0].name;
+          input.setAttribute("data-title", imgName);
+          console.log(e.target.result);
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+    </script>
+    <style>
+      #templateName{
+        min-height: 1.5em;
+        line-height: 2em;
+        margin: .5em 0em;
+      }
+      .inputDnD .form-control-file {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        min-height: 4em;
+        outline: none;
+        visibility: hidden;
+        cursor: pointer;
+        background-color: #c61c23;
+        box-shadow: 0 0 5px solid currentColor;
+      }
+      .inputDnD .form-control-file:before {
+        content: attr(data-title);
+        position: absolute;
+        top: 0.5em;
+        left: 0;
+        width: 100%;
+        min-height: 3em;
+        line-height: 2em;
+        padding-top: 1em;
+        opacity: 1;
+        visibility: visible;
+        text-align: center;
+        border: 0.15em dashed currentColor;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        overflow: hidden;
+      }
+      .inputDnD .form-control-file:hover:before {
+        border-style: solid;
+        box-shadow: inset 0px 0px 0px 0.25em currentColor;
+      }
+      body {
+        background-color: #f7f7f9;
+      }
+    </style>
+  </head>
+  <body>
+    <h4 align='center'> HTML Generator </h4>
+    <div class="container p-y-1">
+      <form id="frmUploader" enctype="multipart/form-data" action="api/Upload/" method="post">
+        <div class="row m-b-1">
+          <div class="col-sm-6 offset-sm-3">
+            <!-- <input type="text" class="form-control-file text-info" placeholder="Enter Template name here ..." name="templateName" id="templateName"  /> -->
+
+              <input type="text" class="form-control-file text-info" placeholder="Enter Template name here ..." name="templateName" id="templateName"  />
+                  <label class="inline"> Market</label>
+                  <label class="radio-inline">
+                    <input type="radio" name="market" value="UK-EN"> UK-EN
+                  </label>
+                  <label class="radio-inline">
+                    <input type="radio" name="market" value="BE-NL"> BE-NL
+                  </label>                
+                  <label class="radio-inline">
+                    <input type="radio" name="market" value="BE-FR"> BE-FR
+                  </label>     
+                 </span>
+          </div>
+        </div>
+        <div class="row m-b-4">
+          <div class="col-sm-6 offset-sm-3">
+            <button type="button" class="btn btn-primary btn-block" onclick="document.getElementById('dataInputFile').click()">Add Data Content File</button>
+            <div class="form-group inputDnD">
+              <label class="sr-only" for="dataInputFile">File Upload</label>
+              <input type="file" class="form-control-file text-info font-weight-bold" name="dataInputFile" id="dataInputFile" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onchange="readUrl(this)" data-title="Drag and drop a file">
+            </div>
+          </div>
+        </div>
+        <div class="row m-b-1">
+          <div class="col-sm-6 offset-sm-3">
+            <button type="button" class="btn btn-primary btn-block" onclick="document.getElementById('mappingInputFile').click()">Add Mapping File</button>
+            <div class="form-group inputDnD">
+              <label class="sr-only" for="mappingInputFile">File Upload</label>
+              <input type="file" class="form-control-file text-info font-weight-bold" name="mappingInputFile"  id="mappingInputFile"  accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"  onchange="readUrl(this)" data-title="Drag and drop a file">
+            </div>
+          </div>
+        </div>
+        <div class="row m-b-1">
+            <div class="col-sm-6 offset-sm-3">
+             <button type="button" class="btn btn-primary btn-block" onclick="document.getElementById('linkInputFile').click()">Add Link File</button>
+              <div class="form-group inputDnD">
+                <label class="sr-only" for="linkInputFile">File Upload</label>
+                <input type="file" class="form-control-file text-info font-weight-bold" name="linkInputFile"  id="linkInputFile"  accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"  onchange="readUrl(this)" data-title="Drag and drop a file">
+              </div>
+            </div>
+          </div>
+        <div class="row m-b-1">
+          <div class="col-sm-6 offset-sm-3">
+            <button type="button" class="btn btn-primary btn-block" onclick="document.getElementById('templateInputFile').click()">Add HTML Template File</button>
+            <div class="form-group inputDnD">
+              <label class="sr-only" for="templateInputFile">File Upload</label>
+              <input type="file" class="form-control-file text-info font-weight-bold" name="templateInputFile" id="templateInputFile" accept="text/html" onchange="readUrl(this)" data-title="Drag and drop a file">
+            </div>
+          </div>
+        </div>
+        <div class="row m-b-1">
+          <div class="col-sm-6 offset-sm-3">
+            <input type="submit" class="form-control-file text-primary font-weight-bold" name="submit" id="btnSubmit" value="Generate HTML Files-->" />
+          </div>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
