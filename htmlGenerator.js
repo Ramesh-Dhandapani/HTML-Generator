@@ -36,8 +36,15 @@
         fs.writeFileSync(distFilePath, JSON.stringify(linksData));
     }
     changeXData = function (newKey, keyValArry, templateContent, lastTemplate) {
+        // console.log("***********newKey*********");
+        // console.log(newKey);
+        // console.log("***********keyValArry*********");
+        // console.log(keyValArry);        
+        // console.log("**********templateContent*********");
+        // console.log(templateContent);      
+        // console.log("***********lastTemplate*********");
+        // console.log(lastTemplate);      
         for (var contObj of xlData) {
-
             let ulContent = '';
             let tempPlaceHolderVal = [];
             for (var keyval of keyValArry) {
@@ -51,29 +58,45 @@
                 var temp = templateContent;
                 for (let j = 0; j < tempPlaceHolderKeys.length; j++) {
                     let valArr = tempPlaceHolderVal[tempPlaceHolderKeys[j]];
-                    console.log("place holder and text");
+                    //     console.log("place holder and text");
                     if (valArr[i]) {
-                        console.log(tempPlaceHolderKeys[j] + " --- " + valArr[i]);
+                            console.log(1);
                         var palceHolder = new RegExp(tempPlaceHolderKeys[j], "g");
                         temp = temp.replace(palceHolder, valArr[i]);
-                        console.log(temp);
+                        //   console.log(temp);
                     } else {
                         if (tempPlaceHolderKeys[j] == "#LINK") {
                             temp = lastTemplate;
+                            //  break;
                         } else if (j == tempPlaceHolderKeys.length - 1) {
-                            temp='';
+                            console.log(2);
+                            if (tempPlaceHolderKeys[j] == "#TEXT") {
+                                console.log(3);
+                                temp='';
+                                isOuterBreak = true;
+                                break;
+                            }
+
+                            var palceHolder = new RegExp(tempPlaceHolderKeys[j], "g");
+                            //    console.log("--- temp ---");
+                                console.log(4);
+                            if (temp)
+                                temp = temp.replace(palceHolder, '');
+                            //     console.log(temp);
                             isOuterBreak = true;
                             break;
-                        }else{
-                            console.log(tempPlaceHolderKeys[j] + " --- " + valArr[i]);
+                        } else {
+                            //     console.log(tempPlaceHolderKeys[j] + " --->>> " + valArr[i]);
                             var palceHolder = new RegExp(tempPlaceHolderKeys[j], "g");
-                            temp = temp.replace(palceHolder, '');
-                            console.log(temp);
+                                  console.log(5);
+                            if (temp)
+                                temp = temp.replace(palceHolder, '');
+                            //      console.log(temp);
                         }
                     }
                 }
-                console.log("--- temp ---");
-                console.log(temp);
+                //    console.log("--- temp ---");
+                //    console.log(temp);
                 ulContent += temp;
                 if (isOuterBreak) break;
                 i++;
@@ -157,7 +180,7 @@
             let attrVal = dataJson[key];
             if (attr == 'innerHtml') {
                 $('#' + id).html(attrVal);
-            } else if (attr == 'src' || attr == 'content' || attr == 'alt' || attr == 'href' || attr == 'mUrl') {
+            } else if (attr == 'src' || attr == 'content' || attr == 'alt' || attr == 'href' || attr == 'mUrl' || attr == 'hotel_cat') {
                 $('#' + id).attr(attr, attrVal);
             } else if (attr == 'value') {
                 $('#' + id).val(attrVal);
@@ -165,7 +188,7 @@
                 let keyVal = attrVal.split("=");
                 $('#' + id).attr(keyVal[0].trim(), keyVal[1].trim());
             } else {
-                console.log(key+" ---- "+attr+ "Attribute Type Not defined "+id)
+                console.log(key + " ---- " + attr + "Attribute Type Not defined " + id)
             }
         }
     }
