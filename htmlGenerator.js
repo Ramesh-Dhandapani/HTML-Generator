@@ -25,8 +25,15 @@
         console.log("----alterData----");
         for (linkData of linksData) {
             let keyValArry = linkData["TEMP_MAP_KEY"].split(',');
-            console.log(keyValArry);
-            changeXData(linkData["NEW_KEY"], keyValArry, linkData['TEMPLATE'], linkData['LAST_TEMPLATE']);
+            console.log("-- linkData --");
+            console.log(linkData);
+            let parentTemplate=(linkData["PARENT_TEMPLATE"])?linkData["PARENT_TEMPLATE"]:'';
+            let parentElementContainSize=(linkData["CONTAIN_SIZE"])?parseInt(linkData["CONTAIN_SIZE"]):0;
+            console.log("-- parentTemplate --");
+            console.log(parentTemplate);
+            console.log("-- parentElementContainSize --");
+            console.log(parentElementContainSize);
+            changeXData(linkData["NEW_KEY"], keyValArry, linkData['TEMPLATE'], linkData['LAST_TEMPLATE'],parentTemplate,parentElementContainSize);
         }
     }
     generateLinkJsonFile = function (srcFilePath, distFilePath) {
@@ -35,32 +42,39 @@
         linksData = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
         fs.writeFileSync(distFilePath, JSON.stringify(linksData));
     }
-    changeXData = function (newKey, keyValArry, templateContent, lastTemplate) {
-        // console.log("***********newKey*********");
-        // console.log(newKey);
-        // console.log("***********keyValArry*********");
-        // console.log(keyValArry);        
-        // console.log("**********templateContent*********");
-        // console.log(templateContent);      
-        // console.log("***********lastTemplate*********");
-        // console.log(lastTemplate);      
+    changeXData = function (newKey, keyValArry, templateContent, lastTemplate, parentTemplate, parentElementContainSize) {
+
         for (var contObj of xlData) {
-            let ulContent = '';
+            let subContent = '';
+            let parentContent = '';
             let tempPlaceHolderVal = [];
             for (var keyval of keyValArry) {
                 var key_val = keyval.split(':');
                 tempPlaceHolderVal[key_val[0]] = formatToArray(contObj[key_val[1]]);
             }
+            console.log("-- tempPlaceHolderVal --");
+            console.log(tempPlaceHolderVal);
             let tempPlaceHolderKeys = Object.keys(tempPlaceHolderVal);
             var i = 0;
             var isOuterBreak = false;
-            while (true) {
+
+            var temp = templateContent;
+            var parentTemp = parentTemplate;
+            var maxLength = 0;
+            for (var key in tempPlaceHolderVal) {
+                if (tempPlaceHolderVal.hasOwnProperty(key)) {
+                   console.log(key, tempPlaceHolderVal[key]);
+                   maxLength=(tempPlaceHolderVal[key].length>maxLength)?tempPlaceHolderVal[key].length:maxLength;
+                }
+             }
+
+            for (var elementCount=1;maxLength>=elementCount;elementCount++) {
                 var temp = templateContent;
                 for (let j = 0; j < tempPlaceHolderKeys.length; j++) {
                     let valArr = tempPlaceHolderVal[tempPlaceHolderKeys[j]];
                     //     console.log("place holder and text");
                     if (valArr[i]) {
-                            console.log(1);
+                        console.log(1);
                         var palceHolder = new RegExp(tempPlaceHolderKeys[j], "g");
                         temp = temp.replace(palceHolder, valArr[i]);
                         //   console.log(temp);
@@ -76,45 +90,37 @@
                                 isOuterBreak = true;
                                 break;
                             }
-
                             var palceHolder = new RegExp(tempPlaceHolderKeys[j], "g");
-                            //    console.log("--- temp ---");
-                                console.log(4);
-                            if (temp)
-                                temp = temp.replace(palceHolder, '');
-                            //     console.log(temp);
-                            isOuterBreak = true;
+                            if (temp)   temp = temp.replace(palceHolder, '');
                             break;
                         } else {
-                            //     console.log(tempPlaceHolderKeys[j] + " --->>> " + valArr[i]);
                             var palceHolder = new RegExp(tempPlaceHolderKeys[j], "g");
                                   console.log(5);
                             if (temp)
                                 temp = temp.replace(palceHolder, '');
-                            //      console.log(temp);
                         }
                     }
                 }
-                //    console.log("--- temp ---");
-                //    console.log(temp);
-                ulContent += temp;
+
+                subContent += temp;
+                if(parentElementContainSize && elementCount%parentElementContainSize ==0)
+                { 
+                    parentContent +=  parentTemp.replace(/#SUB_CONTENT/, subContent);
+                    subContent="";
+                }
                 if (isOuterBreak) break;
                 i++;
             }
-            console.log("-- ulContent --");
-            console.log(ulContent);
-            // let value = formatToArray(contObj[valueKey]); 
-            // let link =  formatToArray(contObj[linkKey]);
-            // let ulContent = '';
-            // let linkCount;
-            // linkCount = (lastTemplate == undefined) ? value.length : value.length - 1;
-            // for (let i = 0; i < linkCount; i++) {
-            //     ulContent += templateContent.replace(/#LINK/g, link[i]).replace(/#TEXT/g, value[i]);
-            // }
-            // if (lastTemplate) {
-            //     ulContent += lastTemplate.replace(/#LINK/g, link[value.length - 1]).replace(/#TEXT/g, value[value.length - 1]);
-            // }
-            contObj[newKey] = ulContent;
+
+            if(parentContent==""){
+                contObj[newKey] = subContent;
+            }else{
+                if(subContent!="") parentContent  +=  parentTemp.replace(/#SUB_CONTENT/, subContent);
+                contObj[newKey] = parentContent;
+            }
+            console.log("-- parentContent --");
+            console.log(contObj[newKey]);
+         //   contObj[newKey] = parentContent==""?subContent:parentContent;
         }
     }
     generateMappingJsonFile = function (srcFilePath, distFilePath) {
